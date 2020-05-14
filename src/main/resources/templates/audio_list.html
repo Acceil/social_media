@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <style>
+        body {
+            background: url("/images/back.jpg");
+            background-size: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<form action="/audio_list" method="get" class="form-inline">
+    <div class="form-group mb-2">
+        <input type="text" class="form-control" name="name" placeholder="Поиск музыки">
+        <input type="submit" value="Search" class="btn-success">
+    </div>
+</form>
+<ul>
+    <li th:each="record : ${records}">
+        <span th:text="${record.originalFilename}"></span>
+        <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="play">Play</a>
+        <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="pause">Pause</a>
+        <a th:href="@{/audio_add/{id}(id=${record.id})}">Add</a>
+    </li>
+</ul>
+</div>
+<audio id="sound" preload="auto" controls></audio>
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/sound.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+</html>

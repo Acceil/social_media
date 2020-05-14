@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Ваш профиль</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <style>
+        body {
+            background: url("/images/back.jpg");
+            background-size: 100%;
+        }
+    </style>
+</head>
+<body class="px-3">
+<br>
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <h2>Аватар</h2>
+            <img th:if="${user.avatar != null}" th:src="@{/uploads/avatar/{id}(id=${user.avatar.id})}"
+                 class="img-thumbnail"
+                 style="height:200px"/>
+
+            <form th:action="@{/profile_avatar}" method="post" enctype="multipart/form-data"
+                  class="mt-2 mb-3 pb-3 row-col-xs-2">
+                <div class="form-group row">
+                    <div class=”col-2”>
+                        <span th:if="${error}" class="alert alert-primary" role="alert">Неверный формат файла!</span>
+                        <input id="file" type="file" name="file" class="form-control"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Загрузить</button>
+                </br>
+            </form>
+
+            </br>
+
+            <form th:action="@{/audio}" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <div class="form-group row">
+                        <div class=”col-2”>
+                    <span th:if="${wrongExtension}" class="alert alert-primary"
+                          role="alert">Неверный формат файла!</span>
+                            <input id="audio_file" type="file" name="audio_file" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-5">
+                        <input id="audio_author" type="text" name="audio_author" class="form-control"
+                               placeholder="Author"/>
+                    </div>
+                    <div class="form-group col-md-5">
+                        <input id="audio_name" type="text" name="audio_name" class="form-control"
+                               placeholder="Song Name"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success">Загрузить</button>
+            </form>
+
+            </br>
+
+            <ul>
+                <li th:each="record : ${user.audioRecords}">
+                    <span th:text="${record.author + ' ' + record.name}"></span>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="play">Play</a>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="pause">Pause</a>
+                    <a th:href="@{/delete_audio/{id}(id=${record.id})}" class="btn btn-light">Remove</a>
+                </li>
+                <a th:href="@{/audio_list}">Музыка</a>
+            </ul>
+            <audio id="sound" preload="auto" controls></audio>
+        </div>
+
+        <div class="col-8">
+            <a th:href="@{/add_post}" class="btn btn-info">Создать пост</a>
+            <br>
+            <div th:each="post : ${user.posts}">
+                <a th:text="${post.postMessage}"></a>
+                <br>
+                <img th:each="image : ${post.images}" th:src="@{/uploads/image/{id}(id=${image.id})}"
+                     class="img-thumbnail" style="height:200px"/>
+                <br>
+                <a th:each="record : ${post.audioRecords}">
+                    <span th:text="${record.author + ' ' + record.name}"></span>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="play">Play</a>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="pause">Pause</a>
+                    <br>
+                </a>
+                <td>
+                    <a th:href="@{/like/post_like/} + ${post.id}" class="js-like" sec:authorize="isAuthenticated()">
+                        <i class="far fa-heart"></i>
+                    </a>
+                </td>
+                </br>
+                <div class="row-cols-2">
+                    <a th:href="@{/edit_post/{id}(id=${post.id})}" class="btn btn-secondary">Редактировать пост</a>
+                    <a th:href="@{/delete_post/{id}(id=${post.id})}" class="btn btn-secondary">Удалить пост</a>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/sound.js}"></script>
+<script th:src="@{/js/fontawesome.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/post_like.js}"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Post Wall</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <style>
+        body {
+            background: url("/images/back.jpg");
+            background-size: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<form th:action="@{/edit_post/{id}(id=${post.id})}" method="post" th:object="${post}">
+    <textarea th:field="*{postMessage}"></textarea>
+    <button type="submit" class="btn-success">Сохранить</button>
+</form>
+
+<div th:each="image : ${post.images}">
+    <img th:if="${image != null}" th:src="@{/uploads/image/{id}(id=${image.id})}"
+         class="img-thumbnail"
+         style="height:200px"/>
+    <a th:href="@{/delete_post_picture/{id}/delete-img/{imgId}(id=${post.id}, imgId=${image.id})}"
+       class="btn-danger btn-circle">X</a>
+</div>
+
+<form th:action="@{/add_post_picture/{id}(id=${post.id})}" method="post" enctype="multipart/form-data"
+      class="mt-3 mb-5 pb-5">
+    <div class="form-group row">
+        <div class=”col-2”>
+            <span th:if="${error}" style="color:red;text-width:bold">Неверный формат файла!</span>
+            <input id="file" type="file" name="file" class="form-control"/>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-success">Загрузить картинку</button>
+    </br>
+</form>
+
+<ul>
+    <li th:each="record : ${post.audioRecords}">
+        <span th:text="${record.author + ' ' + record.name}"></span>
+        <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="play">Play</a>
+        <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="pause">Pause</a>
+        <a th:if="${post.audioRecords.contains(record)}"
+           th:href="@{/edit_post/{id}/delete-audio/{audioId}(id=${post.id}, audioId=${record.id})}"
+           class="btn btn-light">Remove</a>
+    </li>
+</ul>
+
+<ul>
+    <li th:each="record : ${user.audioRecords}">
+        <span th:text="${record.author + ' ' + record.name}"></span>
+        <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="play">Play</a>
+        <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="pause">Pause</a>
+        <a th:if="${!post.audioRecords.contains(record)}"
+           th:href="@{/edit_post/{id}/add-audio/{audioId}(id=${post.id}, audioId=${record.id})}"
+           class="btn btn-success">Add To
+            Post</a>
+    </li>
+</ul>
+
+<audio id="sound" preload="auto" controls></audio>
+
+<style>
+    .btn-circle {
+        width: 50px;
+        height: 50px;
+        border-radius: 30px;
+        text-align: center;
+        padding-left: 5px;
+        padding-right: 5px;
+        font-size: 16px;
+    }
+</style>
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/sound.js}"></script>
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+</body>
+</html>

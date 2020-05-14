@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${user.username}"></title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}"/>
+    <style>
+        body {
+            background: url("/images/back.jpg");
+            background-size: 100%;
+        }
+    </style>
+</head>
+<br>
+<body class="px-3">
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <h2>Аватар</h2>
+            <img th:if="${user.avatar != null}" th:src="@{/uploads/avatar/{id}(id=${user.avatar.id})}"
+                 class="img-thumbnail"
+                 style="height:200px"/>
+            <ul>
+                <li th:each="record : ${user.audioRecords}">
+                    <span th:text="${record.author + ' ' + record.name}"></span>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="play">Play</a>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="pause">Pause</a>
+                </li>
+            </ul>
+            <audio id="sound" preload="auto" controls></audio>
+
+            </br>
+
+            <div th:if="${!currentUser.equals(user)}">
+                <p id="js-friend-status" th:text="${friendStatus}"></p>
+                <div th:if="${!currentUser.friends.contains(user)}">
+                    <div th:if="${!user.friends.contains(currentUser)}">
+                        <a id="js-add-friend" th:href="@{/add_friend/{id}(id=${user.id})}">Добавить друга</a>
+                    </div>
+                    <div th:if="${user.friends.contains(currentUser)}">
+                        <a id="js-add-friend" th:href="@{/add_friend/{id}(id=${user.id})}">Добавить друга</a>
+                    </div>
+                </div>
+                <div th:if="${currentUser.friends.contains(user)}">
+                    <div th:if="${!user.friends.contains(currentUser)}">
+                        <a id="js-delete-friend" th:href="@{/delete_friend/{id}(id=${user.id})}">Отписаться</a>
+                    </div>
+                    <div th:if="${user.friends.contains(currentUser)}">
+                        <a id="js-delete-friend" th:href="@{/delete_friend/{id}(id=${user.id})}">Убрать из друзей</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div th:each="post : ${user.posts}">
+                <a th:text="${post.postMessage}"></a>
+                <br>
+                <img th:each="image : ${post.images}" th:src="@{/uploads/image/{id}(id=${image.id})}"
+                     class="img-thumbnail" style="height:200px"/>
+                <br>
+                <a th:each="record : ${post.audioRecords}">
+                    <span th:text="${record.author + ' ' + record.name}"></span>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="play">Play</a>
+                    <a th:href="@{/uploads/audio/{id}(id=${record.id})}" class="pause">Pause</a>
+                    <br>
+                </a>
+                <td>
+                    <a th:href="@{/like/post_like/} + ${post.id}" class="js-like" sec:authorize="isAuthenticated()">
+                        <i class="far fa-heart"></i>
+                    </a>
+                </td>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/jquery.js}"></script>
+<script th:src="@{/js/sound.js}"></script>
+<script th:src="@{/js/fontawesome.js}"></script>
+<script th:src="@{/js/popper.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/post_like.js}"></script>
+<script th:src="@{/js/friend_request.js}"></script>
+</body>
+</html>
